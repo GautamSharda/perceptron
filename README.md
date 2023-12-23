@@ -4,7 +4,7 @@ a perceptron is a fundamental unit of many neural networks
 
 perceptron.train is a website to experiment with and train perceptrons with different parameters
 
-perceptron.py is intended to be an exteremely simple yet educational implementation of a perceptron
+perceptron.py is intended to be an extremely simple implementation of a perceptron from scratch, without using modern abstractions, for educational purposes
 
 # in progress
 
