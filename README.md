@@ -11,3 +11,11 @@ perceptron.py is intended to be an extremely simple implementation of a perceptr
 parameters: weight data type, number of weights
 
 update_algorithms: sgd, bgd, mgd
+
+# experimenting with
+
+approximated: addition(x, y): x + y
+
+current goal: and(x, y): x*y where x = 0, 1 and y = 0, 1 using thresholding activation function
+
+1 epoch, non-hardcoded differential, random weights, activation function, hookes law data, non-linear functions
