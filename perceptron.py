@@ -1,6 +1,7 @@
 import os
 import csv
 import matplotlib.pyplot as plt
+import argparse
 
 # Path to directory that stores results of training runs
 TRAINING_RUN_DATA_DIRECTORY = '/training_runs'
@@ -27,7 +28,19 @@ class perceptron:
         # Derivatives of error function w.r.t. weights
         dEdW1 = -2 * x1 * error
         dEdW2 = -2 * x2 * error
-        
+
+        # Calculate the gradient norm manually (L2 norm)
+        gradient_norm = (dEdW1 ** 2 + dEdW2 ** 2) ** 0.5
+
+        # Gradient norm clipping
+        max_norm = 1
+        if gradient_norm > max_norm:
+            # Calculate the scaling factor
+            scale = max_norm / gradient_norm
+            # Scale down the gradients
+            dEdW1 *= scale
+            dEdW2 *= scale
+
         # Update weights
         self.weights[0] -= self.learning_rate * dEdW1
         self.weights[1] -= self.learning_rate * dEdW2
@@ -61,6 +74,11 @@ class perceptron:
 
             print(f"Epoch {epoch + 1}, Weights: {self.weights}")
 
+        # test
+        x = 1
+        y = 2
+        print(f"Test 1: f(1, 2) = {self.predict(x, y)}")
+
         # Plotting the error over iterations
         plt.figure(figsize=(10, 6))
         plt.plot(errors)
@@ -68,8 +86,6 @@ class perceptron:
         plt.xlabel('Iterations')
         plt.ylabel('Loss')
         plt.show()
-        
-        print(self.predict(1, 2))
 
         # construct result data
         # store_training_data(results_file, data)
@@ -95,7 +111,15 @@ class perceptron:
                 writer.writerow(row)
 
 learner = perceptron()
-learner.train(data_file='addition_floats.csv', epochs=1, batch_size=9000, results_file=None)
+
+parser = argparse.ArgumentParser(description='script tp train a perceptron')
+parser.add_argument('training_csv', type=str, help='Training data')
+parser.add_argument('epochs', type=int, help='Number of epochs')
+parser.add_argument('batch_size', type=int, help='Size of 1 batch')
+args = parser.parse_args()
+print(f"Training on: {args.batch_size} samples from {args.training_csv} for {args.epochs} epoch")
+
+learner.train(data_file=args.training_csv, epochs=args.epochs, batch_size=args.batch_size, results_file=None)
 
 
 '''
