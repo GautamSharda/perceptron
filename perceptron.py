@@ -3,8 +3,10 @@ import csv
 import matplotlib.pyplot as plt
 import argparse
 
+# Path to directory that stores training data
+DATA_DIRECTORY = 'data'
 # Path to directory that stores results of training runs
-TRAINING_RUN_DATA_DIRECTORY = '/training_runs'
+RESULTS_DIRECTORY = 'results'
 
 class perceptron:
     def __init__(self, weights = [50, -50], learning_rate = 0.01):
@@ -61,23 +63,28 @@ class perceptron:
                 TARGETS.append(float(row[2]))
         return TRAINING_DATA, TARGETS
 
-    def train(self, data_file, epochs, batch_size, results_file):
-        TRAINING_DATA, TARGETS = self.load_training_data(data_file, batch_size)
+    def train(self, data_file, epochs, batch_size):
+        TRAINING_DATA, TARGETS = self.load_training_data(os.path.join(DATA_DIRECTORY, f'{data_file}.csv'), batch_size)
         # Training loop
-        print("Initial weights:", self.weights)
+        print("Initial weights:", self.weights) 
+        results = []
         errors = []
         for epoch in range(epochs):
             for x1, x2, actual in zip(*zip(*TRAINING_DATA), TARGETS):
-                self.update_weights(x1, x2, actual)
                 predicted = self.predict(x1, x2)
-                errors.append(self.compute_error(actual, predicted))
-
+                error = self.compute_error(actual, predicted)
+                errors.append(error)
+                results.append([epoch + 1, tuple(self.weights), error])
+                self.update_weights(x1, x2, actual)
+            
             print(f"Epoch {epoch + 1}, Weights: {self.weights}")
 
         # test
         x = 1
         y = 2
-        print(f"Test 1: f(1, 2) = {self.predict(x, y)}")
+        predicted = self.predict(x, y)
+        print(f"Test 1: f(1, 2) = {predicted}")
+        results.append([epochs + 1, tuple(self.weights), self.compute_error(actual, predicted)])
 
         # Plotting the error over iterations
         plt.figure(figsize=(10, 6))
@@ -87,20 +94,17 @@ class perceptron:
         plt.ylabel('Loss')
         plt.show()
 
-        # construct result data
-        # store_training_data(results_file, data)
+        # store results
+        self.store_results(data_file, results)
         
-    
-    def store_training_data(self, file_name, data):
-        # Data to be written to the CSV file
-        data = [
-            ["Name", "Age", "City"],  # Header row
-            ["Alice", 28, "New York"],
-            ["Bob", 22, "San Francisco"],
-            ["Charlie", 33, "Los Angeles"]
-        ]
 
-        file_path = os.path.join(TRAINING_RUN_DATA_DIRECTORY, f'{file_name}.csv')
+    def store_results(self, file_name, results):
+        # Data to be written to the CSV file
+        data = [["epoch", "weights", "error"]]
+        for result in results:
+            data.append(result)
+
+        file_path = os.path.join(RESULTS_DIRECTORY, f'{file_name}_result.csv')
 
         # Open a new CSV file for writing
         with open(file_path, mode='w', newline='') as file:
@@ -112,14 +116,14 @@ class perceptron:
 
 learner = perceptron()
 
-parser = argparse.ArgumentParser(description='script tp train a perceptron')
-parser.add_argument('training_csv', type=str, help='Training data')
-parser.add_argument('epochs', type=int, help='Number of epochs')
-parser.add_argument('batch_size', type=int, help='Size of 1 batch')
+parser = argparse.ArgumentParser(description='script to train a perceptron')
+parser.add_argument('training_csv', type=str, help='name of training data file')
+parser.add_argument('epochs', type=int, help='number of epochs')
+parser.add_argument('batch_size', type=int, help='size of 1 batch')
 args = parser.parse_args()
-print(f"Training on: {args.batch_size} samples from {args.training_csv} for {args.epochs} epoch")
+print(f"Training on: {args.batch_size} samples from {args.training_csv}.csv for {args.epochs} epoch")
 
-learner.train(data_file=args.training_csv, epochs=args.epochs, batch_size=args.batch_size, results_file=None)
+learner.train(data_file=args.training_csv, epochs=args.epochs, batch_size=args.batch_size)
 
 
 '''
