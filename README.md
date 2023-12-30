@@ -25,3 +25,5 @@ current goal: and(x, y): x*y where x = 0, 1 and y = 0, 1 using thresholding acti
 floats between 0 and 1 learn better, faster, more stable, no need for clipping etc
 
 experiments confirm can't learn non-linear, loss stops decreasing at some point, but can learn linear
+
+not able to approximate sigmoid still, may be an issue with the partial derivatives calculation, or with data

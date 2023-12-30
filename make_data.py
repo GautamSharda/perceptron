@@ -70,4 +70,27 @@ def make_sum_of_squares():
 
     print(f"The training data has been written to {file_path}")
 
-make_sum_of_squares()
+def make_sigmoid():
+    # Define the data and the file name
+    # data = ["x", "y", "sum_of_square"]
+    file_path = os.path.join(DATA_DIRECTORY, 'sigmoid.csv')
+
+    # Write to the CSV file
+    with open(file_path, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        samples = 0
+        while samples < 20000:
+            if samples < 10000:
+                i = random.random()
+                j = random.random()
+                writer.writerow([i, j, 1 / (1 + 2.71828 ** (-i))])
+                samples += 1
+            else:
+                i = random.random() * 2 + 1
+                j = random.random() * 2 + 1
+                writer.writerow([i, j, 1 / (1 + 2.71828 ** (-i))])
+                samples += 1
+
+    print(f"The training data has been written to {file_path}")
+
+make_sigmoid()

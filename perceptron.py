@@ -16,7 +16,11 @@ class perceptron:
 
     def predict(self, x1, x2):
         """Function to predict the output using the current weights."""
-        return self.weights[0]*x1 + self.weights[1]*x2
+        # return self.activation(self.weights[0]*x1 + self.weights[1]*x2)
+        return self.activation(self.weights[0]*x1 + self.weights[1]*x2)
+    
+    def activation(self, value):
+        return 1 / (1 + 2.71828 ** (-value))
 
     def compute_error(self, actual, predicted):
         """Compute the squared error."""
@@ -27,9 +31,12 @@ class perceptron:
         predicted = self.predict(x1, x2)
         error = actual - predicted
         
-        # Derivatives of error function w.r.t. weights
-        dEdW1 = -2 * x1 * error
-        dEdW2 = -2 * x2 * error
+        # Calculate the derivative of the activation function
+        sigmoid_derivative = predicted * (1 - predicted)
+
+        # Derivatives of error function w.r.t. weights incorporating the activation function
+        dEdW1 = -2 * (actual - predicted) * sigmoid_derivative * x1
+        dEdW2 = -2 * (actual - predicted) * sigmoid_derivative * x2
 
         # Calculate the gradient norm manually (L2 norm)
         gradient_norm = (dEdW1 ** 2 + dEdW2 ** 2) ** 0.5
@@ -83,7 +90,7 @@ class perceptron:
         x = 1
         y = 2
         predicted = self.predict(x, y)
-        print(f"Test 1: f(1, 2) = {predicted}")
+        print(f"Test 1: f(1, 2) = {predicted}", f"actual: {self.activation(1)}")
         results.append([epochs + 1, tuple(self.weights), self.compute_error(actual, predicted)])
 
         # Plotting the error over iterations
