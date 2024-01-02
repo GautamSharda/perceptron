@@ -3,7 +3,7 @@ import styles from '../styles/Home.module.css';
 
 export default function Home() {
   return (
-    <>perceptron client</>
+    <>perceptron client, wip, but you can use the repo as a CLI to specify hyperparameters</>
     // <div className={styles.container}>
     //   <Head>
     //     <title>Create Next App</title>
